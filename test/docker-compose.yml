@@ -1,0 +1,9 @@
+version: "3.5"
+services:
+  fluentd:
+    container_name: logrus_fluent_hook_fluent_instance
+    image: fluent/fluentd:v1.5-1
+    volumes:
+      - ./resources/fluent_stdout.conf:/fluentd/etc/fluent.conf
+    ports:
+      - 24224:24224
