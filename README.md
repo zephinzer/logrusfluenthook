@@ -5,6 +5,17 @@ This library exports a Logrus hook which enables streaming logs to FLuentD when 
 
 > A full working application that uses this library can be found in [`./cmd/example/main.go`](./cmd/example/main.go).
 
+## Importing
+
+```go
+package main
+
+import (
+  logrusfluenthook "github.com/zephinzer/logrusfluenthook/hook"
+  // ...
+)
+```
+
 ## Configuring the Hook
 
 ```go
@@ -40,22 +51,24 @@ hookConfig := logrusfluenthook.Config{
 ### Basic
 
 ```go
+// ...
 logrus.Info("hello from stdout (to fluentd)")
 ```
 
 #### Example FluentD Output
 
 ```
-2019-05-31 13:04:11.717347000 +0000 base_tag.log: {"data":{"tag":"log"},"timestamp":"2019-05-31T15:04:11+02:00","msg":"hello from stdout (to fluentd)"}
+2019-06-01 18:23:20.035382000 +0000 base_tag.log: {"@timestamp":"2019-06-02T02:23:20+08:00","@msg":"hello from stdout (to fluentd)","@data":{}}
 ```
 
 ### With Fields
 
 ```go
+// ...
 logrus.WithFields(logrus.Fields{
-		"this_is": "an example of additional data attachments",
-		"tag":     "customise-me",
-	}).Info("hello from stdout (to fluentd)")
+  "this_is": "an example of additional data attachments",
+  "tag":     "customise-me",
+}).Info("hello from stdout (to fluentd)")
 ```
 
 #### Example FluentD Output
@@ -67,6 +80,7 @@ logrus.WithFields(logrus.Fields{
 ### With Caller Reporting
 
 ```go
+// ...
 logrus.SetReportCaller(true)
 logrus.WithFields(logrus.Fields{
   "this_is": "an example of adding caller information",

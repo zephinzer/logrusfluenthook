@@ -1,7 +1,7 @@
 package main
 
 import (
-	logrusfluenthook "logrusfluenthook/pkg/hook"
+	logrusfluenthook "logrusfluenthook/hook"
 
 	"github.com/sirupsen/logrus"
 )
