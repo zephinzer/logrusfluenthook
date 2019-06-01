@@ -94,5 +94,16 @@ logrus.WithFields(logrus.Fields{
 2019-05-31 13:04:11.739373000 +0000 base_tag.with-caller-info: {"timestamp":"2019-05-31T15:04:11+02:00","msg":"hello from stdout (to fluentd)","data":{"tag":"with-caller-info","this_is":"an example of adding caller information"},"caller":{"file":"/Users/zephinzer/Projects/logrus_fluent_hook/cmd/example/main.go","line":59,"function":"main.main"}}
 ```
 
+# Development
+
+## Start the FluentD Service
+Navigate to `./test` and start the FluentD service using `make start`. This should use Docker Compose to spin up a FluentD service with its ports exposed to your local machine at `127.0.0.1:24224`.
+
+## Start Developing
+The code is in [`./hook`](./hook) and the example application is at [`./cmd`](./cmd). To check if the example works, you can run `make run_example` from the root directory.
+
+## Testing
+WIP
+
 # Licensing
 This repository and the code within is licensed under the MIT license. See [LICENSE](./LICENSE) for the full text.
