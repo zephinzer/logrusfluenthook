@@ -7,3 +7,6 @@ example_mac:
 
 run_example: example
 	./bin/example
+
+provision:
+	@cd ./test && $(MAKE) start_d

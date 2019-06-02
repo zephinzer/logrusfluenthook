@@ -10,7 +10,8 @@ func errorContainsString(haystack error, needle string) bool {
 	return strings.Contains(haystack.Error(), needle)
 }
 
-// sliceContainsString returns true if the provided
+// sliceContainsString returns true if the provided :needle is found
+// in the :haystack slice of strings
 func sliceContainsString(haystack []string, needle string) bool {
 	for _, hay := range haystack { // no need for order
 		if hay == needle {

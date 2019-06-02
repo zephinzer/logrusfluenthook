@@ -2,7 +2,6 @@ package hook
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/fluent/fluent-logger-golang/fluent"
 	"github.com/sirupsen/logrus"
@@ -42,7 +41,6 @@ func New(config *Config) (*Hook, error) {
 		levels:         levels,
 	}
 
-	// assign levels
 	hook.SetLevels(config.Levels)
 
 	return &hook, nil
@@ -55,17 +53,19 @@ type Hook struct {
 	levels         []logrus.Level
 }
 
+// getFieldName retrieves the customised label for the fluentd logs,
+// if the requested :field is unassigned, it falls back to the default
+// stored in DefaultFieldMap
 func (hook *Hook) getFieldName(field string) string {
-	fieldName := FieldMap[field]
 	if hook.config.FieldMap[field] != "" {
-		fieldName = hook.config.FieldMap[field]
+		return hook.config.FieldMap[field]
 	}
-	return fieldName
+	return DefaultFieldMap[field]
 }
 
 // getLogTag retrieves the tag to append to the base tag for fluentd
 // to parse
-func (hook *Hook) getLogTag(entry *logrus.Entry) string {
+func (hook Hook) getLogTag(entry *logrus.Entry) string {
 	if entry.Data["tag"] != nil {
 		if tag, ok := entry.Data["tag"].(string); ok {
 			return tag
@@ -74,11 +74,20 @@ func (hook *Hook) getLogTag(entry *logrus.Entry) string {
 	return DefaultLogTag
 }
 
+// getTimeFormat returns the time format according to the configuration,
+// if that's not available, returns the default time format
+func (hook Hook) getTimeFormat() string {
+	if hook.config.TimeFormat != "" {
+		return hook.config.TimeFormat
+	}
+	return DefaultTimeFormat
+}
+
 // getLogData retrieves the data from the provided :entry for use in
 // the log sent to fluentd
 func (hook *Hook) getLogData(entry *logrus.Entry) map[string]interface{} {
 	logData := make(map[string]interface{})
-	logData[hook.getFieldName("timestamp")] = entry.Time.Format(time.RFC3339)
+	logData[hook.getFieldName("timestamp")] = entry.Time.Format(hook.getTimeFormat())
 	logData[hook.getFieldName("message")] = entry.Message
 	logData[hook.getFieldName("data")] = map[string]interface{}(entry.Data)
 	if entry.HasCaller() {

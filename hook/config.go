@@ -13,4 +13,6 @@ type Config struct {
 	Levels []string
 	// FieldMap defines the property labels to use for the various log fields
 	FieldMap map[string]string
+	// TimeFormat defines the format of the timestamp attached to the log entry
+	TimeFormat string
 }
