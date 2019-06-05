@@ -11,6 +11,7 @@ This library exports a Logrus hook which enables streaming logs to FLuentD when 
 package main
 
 import (
+	// ...
   logrusfluenthook "github.com/zephinzer/logrusfluenthook/hook"
   // ...
 )
@@ -22,7 +23,7 @@ import (
 hookConfig := logrusfluenthook.Config{
 		Host:    "127.0.0.1",
 		Port:    24224,
-		BaseTag: "base_tag",
+		BaseTag: "myapplication",
 		Levels: []string{
 			"trace",
 			"debug",
@@ -32,17 +33,45 @@ hookConfig := logrusfluenthook.Config{
 			"fatal",
 			"panic",
 		},
+		FieldMap: map[string]string{
+			"timestamp": "@timestamp",
+			"message":   "@msg",
+			"data":      "@data",
+			"caller":    "@caller",
+			"level":     "@level",
+			"file":      "@file",
+			"func":      "@func",
+		},
+		TimeFormat: time.RFC3339,
 	}
 ```
 
 ## Adding the Hook
 
 ```go
+	logger := logrus.New()
+	// the setting of formatter is necessary if you'd like
+	// to have the same logs in stdout and in fluentd, if
+	// that doesn't matter, you can ignore this next code block
+	logger.SetFormatter(&logrus.JSONFormatter{
+		DataKey: "@data",
+		FieldMap: logrus.FieldMap{
+			logrus.FieldKeyTime:  "@timestamp",
+			logrus.FieldKeyFile:  "@file",
+			logrus.FieldKeyFunc:  "@func",
+			logrus.FieldKeyLevel: "@level",
+			logrus.FieldKeyMsg:   "@msg",
+		},
+	})
+	// ... other customisations of logger ...
 	hook, err := logrusfluenthook.New(&hookConfig)
   if err != nil {
-		logrus.Panic(err)
+		logger.Panic(err)
 	} else {
-		logrus.AddHook(hook)
+		// note that the fluentd service has to be up and reachable
+		// by your application at this point in time, write your
+		// own retry/error handler
+		logger.AddHook(hook)
 	}
 ```
 
@@ -58,7 +87,7 @@ logrus.Info("hello from stdout (to fluentd)")
 #### Example FluentD Output
 
 ```
-2019-06-01 18:23:20.035382000 +0000 base_tag.log: {"@timestamp":"2019-06-02T02:23:20+08:00","@msg":"hello from stdout (to fluentd)","@data":{}}
+2019-06-05 18:11:50.550311624 +0000 base_tag.info: {"@data":{},"@level":"info","@timestamp":"2019-06-06T02:11:50+08:00","@msg":"hello from stdout (to fluentd)"}
 ```
 
 ### With Fields
@@ -74,7 +103,7 @@ logrus.WithFields(logrus.Fields{
 #### Example FluentD Output
 
 ```
-2019-05-31 13:04:11.722584000 +0000 base_tag.customise-me: {"timestamp":"2019-05-31T15:04:11+02:00","msg":"hello from stdout (to fluentd)","data":{"tag":"customise-me","this_is":"an example of additional data attachments"}}
+2019-06-05 18:11:50.552044952 +0000 base_tag.customise-me: {"@level":"info","@timestamp":"2019-06-06T02:11:50+08:00","@msg":"hello from stdout (to fluentd)","@data":{"this_is":"an example of additional data attachments","tag":"customise-me"}}
 ```
 
 ### With Caller Reporting
@@ -91,19 +120,24 @@ logrus.WithFields(logrus.Fields{
 #### Example FluentD Output
 
 ```
-2019-05-31 13:04:11.739373000 +0000 base_tag.with-caller-info: {"timestamp":"2019-05-31T15:04:11+02:00","msg":"hello from stdout (to fluentd)","data":{"tag":"with-caller-info","this_is":"an example of adding caller information"},"caller":{"file":"/Users/zephinzer/Projects/logrus_fluent_hook/cmd/example/main.go","line":59,"function":"main.main"}}
+2019-06-05 18:11:50.553113283 +0000 base_tag.with-caller-info: {"@func":"main.main","@timestamp":"2019-06-06T02:11:50+08:00","@msg":"hello from stdout (to fluentd)","@data":{"this_is":"an example of adding caller information","tag":"with-caller-info"},"@level":"debug","@file":"/home/z/Projects/logrusfluenthook/cmd/example/main.go:59"}
 ```
 
 # Development
 
 ## Start the FluentD Service
-Navigate to `./test` and start the FluentD service using `make start`. This should use Docker Compose to spin up a FluentD service with its ports exposed to your local machine at `127.0.0.1:24224`.
+Run `make setup`. This should use Docker Compose to spin up a FluentD service with its ports exposed to your local machine at `127.0.0.1:24224`.
+
+To stop it, use `make teardown`.
 
 ## Start Developing
 The code is in [`./hook`](./hook) and the example application is at [`./cmd`](./cmd). To check if the example works, you can run `make run_example` from the root directory.
 
 ## Testing
-WIP
+
+Tests can be run using `make run_tests` from the project root directory.
+
+Note that the tests include an integration test which can be found in the [`./test](./test) directory which requires Docker to run (it spins up its own FluentD instance and compares the output/streamed logs).
 
 # Licensing
 This repository and the code within is licensed under the MIT license. See [LICENSE](./LICENSE) for the full text.

@@ -71,7 +71,7 @@ func (hook Hook) getLogTag(entry *logrus.Entry) string {
 			return tag
 		}
 	}
-	return DefaultLogTag
+	return entry.Level.String()
 }
 
 // getTimeFormat returns the time format according to the configuration,
@@ -90,12 +90,10 @@ func (hook *Hook) getLogData(entry *logrus.Entry) map[string]interface{} {
 	logData[hook.getFieldName("timestamp")] = entry.Time.Format(hook.getTimeFormat())
 	logData[hook.getFieldName("message")] = entry.Message
 	logData[hook.getFieldName("data")] = map[string]interface{}(entry.Data)
+	logData[hook.getFieldName("level")] = entry.Level.String()
 	if entry.HasCaller() {
-		logData[hook.getFieldName("caller")] = map[string]interface{}{
-			"file":     entry.Caller.File,
-			"line":     entry.Caller.Line,
-			"function": entry.Caller.Function,
-		}
+		logData[hook.getFieldName("file")] = fmt.Sprintf("%s:%v", entry.Caller.File, entry.Caller.Line)
+		logData[hook.getFieldName("func")] = entry.Caller.Function
 	}
 	return logData
 }
@@ -109,7 +107,7 @@ func (hook *Hook) Fire(entry *logrus.Entry) error {
 
 // Levels implements the logrus.Hook interface and returns the levels
 // for which the Hook should be triggered
-func (hook *Hook) Levels() []logrus.Level {
+func (hook Hook) Levels() []logrus.Level {
 	return hook.levels
 }
 

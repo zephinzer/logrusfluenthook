@@ -13,6 +13,9 @@ var DefaultFieldMap = map[string]string{
 	"message":   "@msg",
 	"data":      "@data",
 	"caller":    "@caller",
+	"level":     "@level",
+	"file":      "@file",
+	"func":      "@func",
 }
 
 // DefaultLogTag is for the tag applied to all logs going to fluentd
@@ -33,3 +36,8 @@ var LevelMap = map[string]interface{}{
 	"fatal": logrus.FatalLevel,
 	"panic": logrus.PanicLevel,
 }
+
+// var LogrusLevelMap = map[logrusLevel]string {
+// 	logrus.TraceLevel: "trace",
+// 	logrus.
+// }

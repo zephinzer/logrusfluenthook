@@ -6,24 +6,20 @@ These tests are for manual testing and also to demonstrate how this hook might b
 
 ## Pre-Requisites
 
-You'll need Docker and Docker Compose to run the test environment.
+You'll need Docker to run the test environment.
 
 ## Get Started
 
-Run the following command to spin up FluentD:
+Run the following commands from this directory to run the integration tests:
 
 ```sh
-docker-compose up
+# manual run
+go test -v ./...
+
+# using Makefile
+make
 ```
 
-To background it:
+## What's Happening
 
-```sh
-docker-compose up -d
-```
-
-To view the logs when it's backgrounded:
-
-```sh
-docker-compose logs -f
-```
+The integration test will setup a FluentD service using Docker, create the logger, add our hook, and make a sample call to the logger. The log received by the FluentD service and the log sent to the output will then be compared for similarity.

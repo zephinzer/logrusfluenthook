@@ -2,6 +2,7 @@ package hook
 
 import (
 	"bytes"
+	"fmt"
 	"runtime"
 	"testing"
 	"time"
@@ -54,9 +55,11 @@ func (s *HookTestSuite) Test_getLogTag_custom() {
 }
 
 func (s *HookTestSuite) Test_getLogTag_default() {
-	expectedTag := DefaultLogTag
+	logLevel := logrus.TraceLevel
+	expectedTag := logLevel.String()
 	logger := logrus.New()
 	entry := logger.WithFields(logrus.Fields{})
+	entry.Level = logLevel
 	hook := Hook{}
 	observedTag := hook.getLogTag(entry)
 	s.Equal(expectedTag, observedTag)
@@ -113,9 +116,8 @@ func (s *HookTestSuite) Test_getLogData() {
 	hook := Hook{config: &Config{FieldMap: map[string]string{}}}
 
 	logData := hook.getLogData(entry)
-	s.Equal(expectedFile, logData["@caller"].(map[string]interface{})["file"])
-	s.Equal(expectedLine, logData["@caller"].(map[string]interface{})["line"])
-	s.Equal(expectedFunction, logData["@caller"].(map[string]interface{})["function"])
+	s.Equal(fmt.Sprintf("%s:%v", expectedFile, expectedLine), logData["@file"])
+	s.Equal(expectedFunction, logData["@func"])
 	s.Equal(expectedStringValue, logData["@data"].(map[string]interface{})[expectedStringKey])
 	s.Equal(expectedFloatValue, logData["@data"].(map[string]interface{})[expectedFloatKey])
 	s.Equal(expectedBoolValue, logData["@data"].(map[string]interface{})[expectedBoolKey])
