@@ -19,18 +19,6 @@ func TestHook(t *testing.T) {
 	suite.Run(t, &HookTestSuite{})
 }
 
-func (s *HookTestSuite) Test_getFieldName_default() {
-	hook := Hook{
-		config: &Config{
-			// empty FieldMap so we can get defaults
-			FieldMap: map[string]string{},
-		},
-	}
-	s.Equal(DefaultFieldMap["timestamp"], hook.getFieldName("timestamp"), "it returns the default value for timestamp")
-	s.Equal(DefaultFieldMap["message"], hook.getFieldName("message"), "it returns the default value for message")
-	s.Equal(DefaultFieldMap["caller"], hook.getFieldName("caller"), "it returns the default value for caller")
-	s.Equal(DefaultFieldMap["data"], hook.getFieldName("data"), "it returns the default value for data")
-}
 func (s *HookTestSuite) Test_getFieldName_custom() {
 	hook := Hook{
 		config: &Config{
@@ -40,6 +28,30 @@ func (s *HookTestSuite) Test_getFieldName_custom() {
 		},
 	}
 	s.Equal("@test", hook.getFieldName("test"), "it returns the stored field value if the field is assigned")
+}
+
+func (s *HookTestSuite) Test_getFieldName_default() {
+	hook := Hook{
+		config: &Config{
+			FieldMap: map[string]string{},
+		},
+	}
+	s.Equal(DefaultFieldMap[logrus.FieldKeyFile], hook.getFieldName(logrus.FieldKeyFile), "it returns the default value for file")
+	s.Equal(DefaultFieldMap[logrus.FieldKeyFunc], hook.getFieldName(logrus.FieldKeyFunc), "it returns the default value for func")
+	s.Equal(DefaultFieldMap[logrus.FieldKeyLevel], hook.getFieldName(logrus.FieldKeyLevel), "it returns the default value for leve")
+	s.Equal(DefaultFieldMap[logrus.FieldKeyMsg], hook.getFieldName(logrus.FieldKeyMsg), "it returns the default value for message")
+	s.Equal(DefaultFieldMap[logrus.FieldKeyTime], hook.getFieldName(logrus.FieldKeyTime), "it returns the default value for timestamp")
+	s.Equal(DefaultFieldMap[FieldKeyData], hook.getFieldName("data"), "it returns the default value for data")
+}
+
+func (s *HookTestSuite) Test_getFieldName_undefined() {
+	hook := Hook{
+		config: &Config{
+			FieldMap: map[string]string{
+				"test": "@test",
+			},
+		},
+	}
 	s.Equal("", hook.getFieldName("@test"), "it returns an empty string if the field is unassigned")
 }
 
@@ -80,6 +92,7 @@ func (s *HookTestSuite) Test_getTimeFormat_default() {
 
 func (s *HookTestSuite) Test_getLogData() {
 	var log bytes.Buffer
+
 	expectedMessage := "hello world"
 	expectedFunction := "test.function"
 	expectedLine := 420
@@ -123,6 +136,8 @@ func (s *HookTestSuite) Test_getLogData() {
 	s.Equal(expectedBoolValue, logData["@data"].(map[string]interface{})[expectedBoolKey])
 	s.Equal(expectedIntegerValue, logData["@data"].(map[string]interface{})[expectedIntegerKey])
 	s.Equal(expectedMessage, logData["@msg"])
+	s.Equal(expectedFunction, logData["@func"])
+	s.Equal(fmt.Sprintf("%s:%v", expectedFile, expectedLine), logData["@file"])
 	s.Equal(expectedTime.Format(time.RFC3339), logData["@timestamp"])
 }
 

@@ -2,6 +2,7 @@ package integrationtest
 
 import (
 	"time"
+	"logrusfluenthook/hook"
 	"github.com/sirupsen/logrus"
 )
 
@@ -9,6 +10,7 @@ var (
 	contextTimeout = 20 * time.Second
 	dockerOpsTimeout = 15 * time.Second
 	loggerFieldMap = logrus.FieldMap{
+		hook.FieldKeyData: "@data",
 		logrus.FieldKeyTime:  "@timestamp",
 		logrus.FieldKeyFile:  "@file",
 		logrus.FieldKeyFunc:  "@func",

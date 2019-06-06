@@ -87,13 +87,13 @@ func (hook Hook) getTimeFormat() string {
 // the log sent to fluentd
 func (hook *Hook) getLogData(entry *logrus.Entry) map[string]interface{} {
 	logData := make(map[string]interface{})
-	logData[hook.getFieldName("timestamp")] = entry.Time.Format(hook.getTimeFormat())
-	logData[hook.getFieldName("message")] = entry.Message
-	logData[hook.getFieldName("data")] = map[string]interface{}(entry.Data)
-	logData[hook.getFieldName("level")] = entry.Level.String()
+	logData[hook.getFieldName(logrus.FieldKeyTime)] = entry.Time.Format(hook.getTimeFormat())
+	logData[hook.getFieldName(logrus.FieldKeyMsg)] = entry.Message
+	logData[hook.getFieldName(FieldKeyData)] = map[string]interface{}(entry.Data)
+	logData[hook.getFieldName(logrus.FieldKeyLevel)] = entry.Level.String()
 	if entry.HasCaller() {
-		logData[hook.getFieldName("file")] = fmt.Sprintf("%s:%v", entry.Caller.File, entry.Caller.Line)
-		logData[hook.getFieldName("func")] = entry.Caller.Function
+		logData[hook.getFieldName(logrus.FieldKeyFile)] = fmt.Sprintf("%s:%v", entry.Caller.File, entry.Caller.Line)
+		logData[hook.getFieldName(logrus.FieldKeyFunc)] = entry.Caller.Function
 	}
 	return logData
 }
