@@ -1,4 +1,4 @@
-module logrusfluenthook
+module github.com/zephinzer/logrusfluenthook
 
 go 1.12
 
