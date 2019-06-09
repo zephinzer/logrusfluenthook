@@ -23,7 +23,8 @@ var (
 const (
 	baseTag = "integration_testing"
 	fluentConfigRelativePath = "./fluent_stdout.conf"
-	fluentImageUrl = "docker.io/fluent/fluentd:v1.5-1"
+	fluentImageUseUrl = "fluent/fluentd:v1.5-1"
+	fluentImagePullUrl = "docker.io/"+fluentImageUseUrl
 	fluentContainerName = "logrus_fluent_hook_integration_test_instance"
 	fluentRemotePort = "24224"
 	localhost = "127.0.0.1"

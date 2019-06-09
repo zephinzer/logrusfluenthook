@@ -117,8 +117,8 @@ func (s *IntegrationTestSuite) SetupTest() {
 	log.Println("instantiating a docker client...")
 	s.docker = createDockerClient()
 
-	log.Printf("pulling fluent image from '%s'...", fluentImageUrl)
-	pullImage(s.docker, fluentImageUrl)
+	log.Printf("pulling fluent image from '%s'...", fluentImagePullUrl)
+	pullImage(s.docker, fluentImagePullUrl)
 
 	log.Printf("finding a free local port... ")
 	s.fluentLocalPort = getFreePort()
@@ -131,7 +131,7 @@ func (s *IntegrationTestSuite) SetupTest() {
 			ExposedPorts: nat.PortSet{
 				fluentRemotePort: struct{}{},
 			},
-			Image: fluentImageUrl,
+			Image: fluentImageUseUrl,
 			Tty:   false,
 		},
 		&dockerContainer.HostConfig{
