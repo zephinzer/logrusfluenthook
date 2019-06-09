@@ -18,8 +18,12 @@ example_windows: dep
 run_example: example
 	./bin/example
 
-coverage: dep
-	@go test -v -cover -coverprofile=c.out ./...
+test_integration: dep
+	@go test -v -cover -coverprofile=c.out ./test
+
+test_unit: dep
+	@go test -v -cover -coverprofile=c.out ./hook
+
 
 dep:
 	@go mod vendor
