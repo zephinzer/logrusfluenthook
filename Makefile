@@ -4,15 +4,15 @@ example:
 	@$(MAKE) example_windows
 
 example_mac: dep
-	@GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 \
+	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 \
 		go build -ldflags '-extldflags "-static"' -o ./bin/example-darwin-amd64 ./cmd/example
 
 example_linux: dep
-	@GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
 		go build -ldflags '-extldflags "-static"' -o ./bin/example-linux-amd64 ./cmd/example
 
-example_linux: dep
-	@GO111MODULE=on CGO_ENABLED=0 GOOS=windows GOARCH=386 \
+example_windows: dep
+	GO111MODULE=on CGO_ENABLED=0 GOOS=windows GOARCH=386 \
 		go build -ldflags '-extldflags "-static"' -o ./bin/example-windows-386.exe ./cmd/example
 
 run_example: example
