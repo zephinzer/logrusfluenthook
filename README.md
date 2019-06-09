@@ -1,5 +1,7 @@
 # Logrus Fluent Hook
-This library exports a Logrus hook which enables streaming logs to FLuentD when added to a Logrus instance.
+This library exports a Logrus hook which enables streaming logs to FluentD when added to a Logrus instance.
+
+[![Build Status](https://travis-ci.org/zephinzer/logrusfluenthook.svg?branch=master)](https://travis-ci.org/zephinzer/logrusfluenthook)
 
 # Example Usage
 
@@ -41,7 +43,7 @@ hookConfig := logrusfluenthook.Config{
 			logrus.FieldKeyFile:      "@file",
 			logrus.FieldKeyFunc:      "@func",
 		},
-		TimeFormat: time.RFC3339,
+		TimestampFormat: time.RFC3339,
 	}
 ```
 
@@ -86,7 +88,7 @@ logrus.Info("hello from stdout (to fluentd)")
 #### Example FluentD Output
 
 ```
-2019-06-05 18:11:50.550311624 +0000 base_tag.info: {"@data":{},"@level":"info","@timestamp":"2019-06-06T02:11:50+08:00","@msg":"hello from stdout (to fluentd)"}
+2019-06-09 14:56:57.683867999 +0000 base_tag.info: {"@timestamp":"2019-06-09T22:56:57+08:00","@msg":"hello from stdout (to fluentd)","@data":{},"@level":"info"}
 ```
 
 ### With Fields
@@ -102,7 +104,7 @@ logrus.WithFields(logrus.Fields{
 #### Example FluentD Output
 
 ```
-2019-06-05 18:11:50.552044952 +0000 base_tag.customise-me: {"@level":"info","@timestamp":"2019-06-06T02:11:50+08:00","@msg":"hello from stdout (to fluentd)","@data":{"this_is":"an example of additional data attachments","tag":"customise-me"}}
+2019-06-09 14:56:57.685854295 +0000 base_tag.customise-me: {"@timestamp":"2019-06-09T22:56:57+08:00","@msg":"hello from stdout (to fluentd)","@data":{"this_is":"an example of additional data attachments","tag":"customise-me"},"@level":"info"}
 ```
 
 ### With Caller Reporting
@@ -119,7 +121,7 @@ logrus.WithFields(logrus.Fields{
 #### Example FluentD Output
 
 ```
-2019-06-05 18:11:50.553113283 +0000 base_tag.with-caller-info: {"@func":"main.main","@timestamp":"2019-06-06T02:11:50+08:00","@msg":"hello from stdout (to fluentd)","@data":{"this_is":"an example of adding caller information","tag":"with-caller-info"},"@level":"debug","@file":"/home/z/Projects/logrusfluenthook/cmd/example/main.go:59"}
+2019-06-09 14:56:57.687134165 +0000 base_tag.with-caller-info: {"@msg":"hello from stdout (to fluentd)","@data":{"this_is":"an example of adding caller information","tag":"with-caller-info"},"@level":"debug","@file":"/<REDACTED>/logrusfluenthook/cmd/example/main.go:59","@func":"main.main","@timestamp":"2019-06-09T22:56:57+08:00"}
 ```
 
 # Development

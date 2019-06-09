@@ -14,12 +14,18 @@ env:
 jobs:
   include:
     - stage: test
+      env:
+        - TYPE=example
       script:
         - make example
     - stage: test
+      env:
+        - TYPE=integration
       script:
         - docker pull fluent/fluentd:v1.5-1
         - make test_integration
     - stage: test
+      env:
+        - TYPE=unit
       script:
         - make test_unit

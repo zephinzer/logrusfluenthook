@@ -19,6 +19,8 @@ import (
 func New(config *Config) (*Hook, error) {
 	levels := []logrus.Level{}
 
+	config.assignDefaults()
+
 	// create fluent logger instance
 	fluentInstance, err := fluent.New(fluent.Config{
 		FluentHost:         config.Host,
@@ -77,10 +79,10 @@ func (hook Hook) getLogTag(entry *logrus.Entry) string {
 // getTimeFormat returns the time format according to the configuration,
 // if that's not available, returns the default time format
 func (hook Hook) getTimeFormat() string {
-	if hook.config.TimeFormat != "" {
-		return hook.config.TimeFormat
+	if hook.config.TimestampFormat != "" {
+		return hook.config.TimestampFormat
 	}
-	return DefaultTimeFormat
+	return DefaultTimestampFormat
 }
 
 // getLogData retrieves the data from the provided :entry for use in

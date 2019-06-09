@@ -6,12 +6,24 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// DefaultFluentPort defines the default fluentd hostname if no
+// host is specified in the configuration
+const DefaultFluentHost = "0.0.0.0"
+
+// DefaultFluentPort defines the default port to use if no
+// port is specified in the configuration
+const DefaultFluentPort uint16 = 24224
+
+// DefaultFluentTagPrefix defines the default string used by fluentd
+// as the base tag
+const DefaultFluentTagPrefix = "app"
+
 // DefaultLogTag is for the tag applied to all logs going to fluentd
 // after the base tag
 const DefaultLogTag = "log"
 
-// DefaultTimeFormat is for use when no timestamp format is defined
-const DefaultTimeFormat = time.RFC3339
+// DefaultTimestampFormat is for use when no timestamp format is defined
+const DefaultTimestampFormat = time.RFC3339
 
 // FieldKeyData is an extension of the logrus Fields for the data key
 // so we can avoid having a DataKey property like logrus is doing
