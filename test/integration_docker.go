@@ -3,8 +3,10 @@ package integrationtest
 import (
 	"bytes"
 	"context"
+	"log"
 	"io"
 	"strings"
+	"time"
 
 	dockerClient "github.com/docker/docker/client"
 	dockerTypes "github.com/docker/docker/api/types"
@@ -45,13 +47,17 @@ func pullImage(
 	docker *dockerClient.Client,
 	imageUrl string,
 ) {
-	_, err := docker.ImagePull(
-		context.Background(),
+	ctx, cancel := context.WithTimeout(context.Background(), 20 * time.Second)
+	defer cancel()
+	pullLogs, err := docker.ImagePull(
+		ctx,
 		imageUrl,
 		dockerTypes.ImagePullOptions{},
 	)
 	if err != nil {
 		panic(err)
+	} else {
+		log.Println(pullLogs)
 	}
 }
 
